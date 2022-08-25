@@ -1,0 +1,206 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/meteor-solid.png" type="image/png">
+    <title>Weather</title>
+    <style>
+        table {
+            border: 1px solid black;
+        }
+    </style>
+    <link href="/bootstrap-5.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/fontawesome-free-6.1.2-web/css/all.min.css" rel="stylesheet">    
+</head>
+
+</head>
+
+<body class="container">
+
+    <h1 class="text-center">Welcome on Meteor Weather!</h1>
+    <br>
+    <br>
+    <h2>City Weather Information</h2>
+    <p>
+        <i class="fa-solid fa-clock"> </i><span id="currentData"></span> | <span id="dataUpdate"></span>
+    </p>
+    <ul class="nav nav-tabs" id="weather" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="today-tab" data-bs-toggle="tab" data-bs-target="#today-tab-pane"
+                type="button" role="tab" aria-controls="today-tab-pane" aria-selected="true">Today</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="twelveHour-tab" data-bs-toggle="tab" data-bs-target="#twelveHour-tab-pane"
+                type="button" role="tab" aria-controls="twelveHour-tab-pane" aria-selected="false">12 Hours</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="fiveDay-tab" data-bs-toggle="tab" data-bs-target="#fiveDay-tab-pane"
+                type="button" role="tab" aria-controls="fiveDay-tab-pane" aria-selected="false">5 Days</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="weatherContent">
+        <div class="tab-pane fade show active" id="today-tab-pane" role="tabpanel" aria-labelledby="today-tab"
+            tabindex="0">
+            <h3>Today</h3>
+            <div id="cardA" class="pb-4">
+
+            </div>
+        </div>
+        <div class="tab-pane fade" id="twelveHour-tab-pane" role="tabpanel" aria-labelledby="twelveHour-tab"
+            tabindex="0">
+            <h3>12 Hours</h3>
+            <div class="row row-cols-1 row-cols-md-3 g-4 pb-4" id="cardC">
+
+            </div>
+        </div>
+        <div class="tab-pane fade" id="fiveDay-tab-pane" role="tabpanel" aria-labelledby="fiveDay-tab" tabindex="0">
+            <h3>5 Days</h3>
+            <div class="row row-cols-1 row-cols-md-3 g-4 pb-4" id="cardB">
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/bootstrap-5.2.0/js/bootstrap.bundle.js"></script>
+
+    <script src="template-script.js"></script>
+    <script>
+        (document.getElementById('currentData')).innerText = (new Date).toLocaleString();        
+        var oggettoMeteo = {
+            temperature: {
+                attuale: 0,
+                percepite: 0
+            },
+            umidita: 0,
+            vento: {
+                direzione: "",
+                velocita: 0
+            },
+            ultravioletto: "",
+        };
+        function readCurrentWeather() {
+            let ajax = new XMLHttpRequest();
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState === 4) {                    
+                    switch (ajax.status) {
+                        case 200:
+                        case 400:
+                            let _resData = JSON.parse(ajax.response)[0];                            
+                            let _jData = JSON.parse(_resData.json_data)[0];
+                            let $card = document.getElementById('cardA');
+                            $card.innerHTML = "";
+                            $card.innerHTML = cardA(_jData);
+                            
+                            (document.getElementById('dataUpdate')).innerText = (new Date(_resData.created_at)).toLocaleString();
+                            break;
+                        default:
+                            console.log("ERRORE: " + ajax.status);
+                            break;
+                    }
+                }
+            };
+
+            ajax.open("GET", "index.php?a=getCurrentConditions");
+            ajax.setRequestHeader("Accept", "application/json");
+            ajax.setRequestHeader("Content-type", "application/json");
+            ajax.send();
+        }
+        function read5DaysWeather() {
+            let ajax = new XMLHttpRequest();
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState === 4) {                    
+                    switch (ajax.status) {
+                        case 200:
+                        case 400:
+                            let _resData = JSON.parse(ajax.response)[0];                            
+                            let _jData = JSON.parse(_resData.json_data);
+                            let $card = document.getElementById('cardB');
+                            $card.innerHTML = "";
+                            _jData.DailyForecasts.forEach((info) => {
+                                $card.innerHTML += cardB(info);
+                            });
+                            (document.getElementById('dataUpdate')).innerText = (new Date(_resData.created_at)).toLocaleString();
+                            break;
+                        default:
+                            console.log("ERRORE: " + ajax.status);
+                            break;
+                    }
+                }
+            };
+
+            ajax.open("GET", "index.php?a=getDailyForecasts");
+            ajax.setRequestHeader("Accept", "application/json");
+            ajax.setRequestHeader("Content-type", "application/json");
+            ajax.send();
+        }
+        function read12HoursWeather() {
+            let ajax = new XMLHttpRequest();
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState === 4) {                    
+                    switch (ajax.status) {
+                        case 200:
+                        case 400:
+                            let _resData = JSON.parse(ajax.response)[0];                            
+                            let _jData = JSON.parse(_resData.json_data);
+                            let $card = document.getElementById('cardC');
+                            $card.innerHTML = "";
+                            _jData.forEach((info) => {
+                                $card.innerHTML += cardC(info);
+                            });
+
+                            (document.getElementById('dataUpdate')).innerText = (new Date(_resData.created_at)).toLocaleString();
+                            break;
+                        default:
+                            console.log("ERRORE: " + ajax.status);
+                            break;
+                    }
+                }
+            };
+
+            ajax.open("GET", "index.php?a=getHourlyForecast");
+            ajax.setRequestHeader("Accept", "application/json");
+            ajax.setRequestHeader("Content-type", "application/json");
+            ajax.send();
+        }
+
+
+
+        document.onreadystatechange = () => {
+            if (document.readyState === 'complete') {
+                readCurrentWeather();
+
+                const navLinks = document.getElementsByClassName('nav-link');
+                Array.from(navLinks).forEach(link => {
+                    link.addEventListener('click', function(ev) {
+                        (document.getElementById('cardA')).innerHTML = "";
+                        (document.getElementById('cardB')).innerHTML = "";
+                        (document.getElementById('cardC')).innerHTML = "";
+                        let tabLink = ev.target.id;
+
+                        switch (tabLink) {
+                            case "today-tab":
+                                readCurrentWeather();
+                                
+                            case "twelveHour-tab":                                
+                                read12HoursWeather();
+                                
+                                break;
+                            case "fiveDay-tab":
+                                read5DaysWeather();
+                                
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                    })
+                });
+            }
+        }
+    </script>
+
+</body>
+
+</html>
