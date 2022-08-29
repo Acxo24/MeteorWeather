@@ -26,7 +26,7 @@ USE `meteor_weather`;
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `five_day`
+-- Structure of the table `five_day`
 --
 
 DROP TABLE IF EXISTS `five_day`;
@@ -41,25 +41,7 @@ CREATE TABLE IF NOT EXISTS `five_day` (
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `request_log`
---
-
-DROP TABLE IF EXISTS `request_log`;
-CREATE TABLE IF NOT EXISTS `request_log` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `action` varchar(255) NOT NULL,
-  `response` text DEFAULT NULL,
-  `status` text DEFAULT NULL,
-  `info` text DEFAULT NULL,
-  `errors` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Struttura della tabella `today`
+-- Structure of the table `today`
 --
 
 DROP TABLE IF EXISTS `today`;
@@ -74,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `today` (
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `twelve_hour`
+-- Structure of the table `twelve_hour`
 --
 
 DROP TABLE IF EXISTS `twelve_hour`;

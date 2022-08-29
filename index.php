@@ -1,17 +1,17 @@
 <?php
-$api_key = "";
-$userdb = "";
-$passw = "";
-$city = 190390;
-require_once("config.php"); // It contains the API's key, the username of the database and the password of the database
+$userdb = ""; //This is the variable for the user's database
+$passw = ""; //This is the variable for the database's password 
+$dbname = ""; //This is the variable for database's name
+$api_key = ""; //This is the variable for the AccuWeather api's key
+$city = 190390; //This is the code of the city for the api
 
 require_once("functions.php");
 require_once("database.php");
 require_once("api-weather.php");
 
-$todayRepo = new Database($userdb, $passw, "dev_weather", "today");
-$twelveHourRepo = new Database($userdb, $passw, "dev_weather", "twelve_hour");
-$fiveDayRepo = new Database($userdb, $passw, "dev_weather", "five_day");
+$todayRepo = new Database($userdb, $passw, $dbname, "today");
+$twelveHourRepo = new Database($userdb, $passw, $dbname, "twelve_hour");
+$fiveDayRepo = new Database($userdb, $passw, $dbname, "five_day");
 $apiWeather = new ApiWeather($api_key);
 
 // setup the content of response to json type

@@ -1,5 +1,4 @@
 const $DateOptions = {
-  // weekday: 'long',
   year: 'numeric',
   month: 'long',
   day: 'numeric',
@@ -19,7 +18,6 @@ const righeTabella = (info) =>
         <td>--</td>
     </tr>`;
 
-//DA SISTEMARE
 function icona(idIcona) {
   switch (idIcona) {
     case 1:

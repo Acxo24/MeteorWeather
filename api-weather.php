@@ -84,12 +84,31 @@ class ApiWeather
     }
 
     /**
-     *  This function is used to register action request in the database
+     *  This function is used to register action request in a txt file
      */
     private function logRequest(string $action, object $res)
     {
-        $db = new Database("dev_weather", "sticazzi", "dev_weather", "request_log");
-        $dataInsert = ["action" => $action, "created_at" => new DateTime(), "response" => $res->response, "status" => $res->status, "info" => json_encode($res->info), "errors" => $res->errors];
-        $db->insert($dataInsert);
+        $filename = (new DateTime())->format("Y-m-d") . ".log";
+        $dir = "logs";
+        $fullPath = $dir . DIRECTORY_SEPARATOR . $filename;
+        // $db = new Database("dev_weather", "sticazzi", "dev_weather", "request_log");
+        // $dataInsert = ["action" => $action, "created_at" => new DateTime(), "response" => $res->response, "status" => $res->status, "info" => json_encode($res->info), "errors" => $res->errors];
+        // $db->insert($dataInsert);
+
+        $date = (new DateTime())->format(DateTimeInterface::W3C);
+        $status = $res->status;
+        $info = json_encode($res->info);
+        $errors =  $res->errors;
+        $response = "KO";
+        if ($status == 200) {
+            $response = "OK";
+        }
+        $dataInsert = "$date;$action;$response;$status;$errors;$info\n";
+        if (!\file_exists($dir)) {
+            \mkdir($dir);
+        }
+        $handle = fopen($fullPath, "ab");
+        fwrite($handle, $dataInsert);
+        fclose($handle);
     }
 }

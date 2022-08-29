@@ -12,7 +12,7 @@
         }
     </style>
     <link href="/bootstrap-5.2.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/fontawesome-free-6.1.2-web/css/all.min.css" rel="stylesheet">    
+    <link href="/fontawesome-free-6.1.2-web/css/all.min.css" rel="stylesheet">
 </head>
 
 </head>
@@ -67,32 +67,36 @@
 
     <script src="template-script.js"></script>
     <script>
-        (document.getElementById('currentData')).innerText = (new Date).toLocaleString();        
-        var oggettoMeteo = {
-            temperature: {
-                attuale: 0,
-                percepite: 0
-            },
-            umidita: 0,
-            vento: {
-                direzione: "",
-                velocita: 0
-            },
-            ultravioletto: "",
-        };
+        var initDate = new Date;
+        (document.getElementById('currentData')).innerText = initDate.toLocaleString();
+        
+        /**
+         *  This function is used to check if the first date is greater than the second one,
+         *  if so then reload the page  
+        */
+        function checkTimeForReload() {
+            let nowDate = new Date(initDate);
+            if (nowDate.setHours(nowDate.getHours() - 1) > initDate) {
+                window.location.reload();
+            }
+        }
+
+        /**
+         * This function is used to read the current weather
+        */
         function readCurrentWeather() {
             let ajax = new XMLHttpRequest();
             ajax.onreadystatechange = function () {
-                if (ajax.readyState === 4) {                    
+                if (ajax.readyState === 4) {
                     switch (ajax.status) {
                         case 200:
                         case 400:
-                            let _resData = JSON.parse(ajax.response)[0];                            
+                            let _resData = JSON.parse(ajax.response)[0];
                             let _jData = JSON.parse(_resData.json_data)[0];
                             let $card = document.getElementById('cardA');
                             $card.innerHTML = "";
                             $card.innerHTML = cardA(_jData);
-                            
+
                             (document.getElementById('dataUpdate')).innerText = (new Date(_resData.created_at)).toLocaleString();
                             break;
                         default:
@@ -107,14 +111,18 @@
             ajax.setRequestHeader("Content-type", "application/json");
             ajax.send();
         }
+
+        /**
+         * This function is used to read the 5 days weather
+        */
         function read5DaysWeather() {
             let ajax = new XMLHttpRequest();
             ajax.onreadystatechange = function () {
-                if (ajax.readyState === 4) {                    
+                if (ajax.readyState === 4) {
                     switch (ajax.status) {
                         case 200:
                         case 400:
-                            let _resData = JSON.parse(ajax.response)[0];                            
+                            let _resData = JSON.parse(ajax.response)[0];
                             let _jData = JSON.parse(_resData.json_data);
                             let $card = document.getElementById('cardB');
                             $card.innerHTML = "";
@@ -135,14 +143,18 @@
             ajax.setRequestHeader("Content-type", "application/json");
             ajax.send();
         }
+
+        /**
+         * This function is used to read the 12 hours weather
+        */
         function read12HoursWeather() {
             let ajax = new XMLHttpRequest();
             ajax.onreadystatechange = function () {
-                if (ajax.readyState === 4) {                    
+                if (ajax.readyState === 4) {
                     switch (ajax.status) {
                         case 200:
                         case 400:
-                            let _resData = JSON.parse(ajax.response)[0];                            
+                            let _resData = JSON.parse(ajax.response)[0];
                             let _jData = JSON.parse(_resData.json_data);
                             let $card = document.getElementById('cardC');
                             $card.innerHTML = "";
@@ -169,35 +181,36 @@
 
         document.onreadystatechange = () => {
             if (document.readyState === 'complete') {
-                readCurrentWeather();
-
                 const navLinks = document.getElementsByClassName('nav-link');
+                readCurrentWeather();
                 Array.from(navLinks).forEach(link => {
-                    link.addEventListener('click', function(ev) {
-                        (document.getElementById('cardA')).innerHTML = "";
-                        (document.getElementById('cardB')).innerHTML = "";
-                        (document.getElementById('cardC')).innerHTML = "";
+                    link.addEventListener('click', function (ev) {
                         let tabLink = ev.target.id;
-
+                        api's key
+$userdb = ""; //This is the variable for the user's databa
                         switch (tabLink) {
                             case "today-tab":
+                                (document.getElementById('cardA')).innerHTML = "";
                                 readCurrentWeather();
-                                
-                            case "twelveHour-tab":                                
+
+                            case "twelveHour-tab":
+                                (document.getElementById('cardC')).innerHTML = "";
                                 read12HoursWeather();
-                                
+
                                 break;
                             case "fiveDay-tab":
+                                (document.getElementById('cardB')).innerHTML = "";
                                 read5DaysWeather();
-                                
+
                                 break;
-                        
+
                             default:
                                 break;
                         }
-                    })
+                    }, { once: true })
                 });
             }
+
         }
     </script>
 
